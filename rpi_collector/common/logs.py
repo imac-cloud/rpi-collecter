@@ -1,3 +1,7 @@
+# coding=utf-8
+# Copyright 2016 NUTC i.m.a.c.
+# All Rights Reserved
+
 import logging
 import sys
 
@@ -5,7 +9,7 @@ BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
 COLORS = {
     'WARNING': YELLOW,
-    'INFO': WHITE,
+    'INFO': YELLOW,
     'DEBUG': BLUE,
     'CRITICAL': RED,
     'ERROR': RED,

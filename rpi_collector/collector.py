@@ -15,37 +15,12 @@
 #    under the License.
 #
 
-import time
-import datetime
 import logging
-from threading import Thread
 from rpi_collector.common import logs
+from rpi_collector.common import config
+from rpi_collector.temperature import Temperature
 
-LOG = logging.getLogger("Monitor")
-
-
-class Temperature(Thread):
-    def __init__(self, sensor_id_path, interval):
-        super(Temperature, self).__init__()
-        self.interval = interval
-        self.sensor_path = sensor_id_path
-
-    def parse_data(self, content):
-        data = content.split("\n")[1].split(" ")[9]
-        return float(data[2:]) / 1000
-
-    def run(self):
-        while True:
-            sensor_file = open(self.sensor_path)
-            sensor_content = sensor_file.read()
-            sensor_file.close()
-            now_time = datetime.datetime.now()
-            LOG.info("{time}, {temp}".format(
-                time=now_time,
-                temp=self.parse_data(sensor_content)
-            ))
-
-            time.sleep(self.interval)
+LOG = logging.getLogger("Collector")
 
 
 def main():
@@ -58,10 +33,19 @@ def main():
     root_logger.addHandler(sh)
     sh.setLevel(logging.DEBUG)
 
+    conf = config.Configuration(config.FILE_PATH)
+
     sensor = Temperature(
-        "/sys/bus/w1/devices/28-00000758ff7b/w1_slave",
-        1
+        sensor_id_path=conf.sensor_path(),
+        interval=conf.time_interval(),
+        mq_type=conf.message_queue_type(),
+        mq_address=conf.message_queue_address(),
+        mq_port=conf.message_queue_port(),
+        mq_topic=conf.message_queue_topic(),
+        mq_qos=conf.message_queue_qos(),
     )
+
+    # if you want to run on thread, you can call "start()" method
     sensor.run()
 
 

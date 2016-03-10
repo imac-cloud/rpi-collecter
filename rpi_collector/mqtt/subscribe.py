@@ -1,4 +1,6 @@
 # coding=utf-8
+# Copyright 2016 NUTC i.m.a.c.
+# All Rights Reserved
 
 import logging
 import datetime
