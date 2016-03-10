@@ -7,21 +7,21 @@
 # 安裝與執行
 首先安裝 python 與 python-pip 套件：
 ```sh
-$ sudo apt-get install -y git python-pip
+$ sudo apt-get install -y git python-pip python-setuptools
 ```
 
 從 Git Server 將 Repositiory 下載至要執行的 Raspberry Pi 上：
 ```sh
-$ git clone https://github.com/imac-cloud/rpi-collecter.git
-$ cd rpi-collecter
+$ git clone https://github.com/imac-cloud/rpi-collector.git
+$ cd rpi-collector
 ```
 
 建立 conf 目錄，並複製 conf 檔案到 etc 底下：
 ```sh
-$ SERVICE="rpi-collecter"
+$ SERVICE="rpi-collector"
 $ sudo mkdir -p /etc/${SERVICE}
 $ sudo chown -R ${SERVICE}:${SERVICE} /etc/${SERVICE}
-$ sudo cp -r etc/rpi-collecter/rpi-collecter.conf /etc/${SERVICE}/
+$ sudo cp -r etc/rpi-collector/rpi-collector.conf /etc/${SERVICE}/
 ```
 
 安裝```rpi-collecter```服務套件：
@@ -33,7 +33,7 @@ $ sudo pip install .
 $ sudo python setup.py install
 ```
 
-編輯```/etc/rpi-collecter/rpi-collecter.conf```檔案，並修改一下：
+編輯```/etc/rpi-collector/rpi-collector.conf```檔案，並修改一下：
 ```conf
 [default]
 sensor_id_path = /sys/bus/w1/devices/28-00000758ff7b/w1_slave
@@ -51,9 +51,8 @@ qos_level = 2
 完成後，即可透過以下指令執行（目前還沒完成 Service 方式執行）：
 ```sh
 $ rpi-collector
-
-[Temperature][INFO] 2016-03-10 15:58:12.315205, 23.75
-[Temperature][INFO] 2016-03-10 15:58:13.339659, 23.75
-[Temperature][INFO] 2016-03-10 15:58:14.360168, 23.75
-[Temperature][INFO] 2016-03-10 15:58:15.369965, 23.75
+[collect.temperature][INFO] 2016-03-10 17:14:37.535571, 23.75
+[collect.temperature][INFO] 2016-03-10 17:14:38.565419, 23.75
+[collect.temperature][INFO] 2016-03-10 17:14:39.583886, 23.75
+[collect.temperature][INFO] 2016-03-10 17:14:40.611681, 23.75
 ```
