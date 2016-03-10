@@ -20,7 +20,7 @@ from rpi_collector.common import logs
 from rpi_collector.common import config
 from rpi_collector.temperature import Temperature
 
-LOG = logging.getLogger("Collector")
+LOG = logging.getLogger("collect")
 
 
 def main():

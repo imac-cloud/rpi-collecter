@@ -6,7 +6,7 @@ import logging
 from threading import Thread
 from kafka import KafkaProducer
 
-LOG = logging.getLogger("Producer")
+LOG = logging.getLogger("collect.kafka.producer")
 
 
 class Producer(Thread):
@@ -18,8 +18,8 @@ class Producer(Thread):
         self.message = None
 
         self.producer = KafkaProducer(
-            bootstrap_servers="{host}:{port}".format(host, port),
-            retries=5
+            client_id="",
+            bootstrap_servers=["{host}:{port}".format(host=host, port=port)]
         )
 
     def run(self):

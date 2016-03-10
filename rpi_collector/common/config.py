@@ -4,7 +4,7 @@
 
 from ConfigParser import SafeConfigParser
 
-FILE_PATH = "/etc/rpi-collecter/rpi-collecter.conf"
+FILE_PATH = "/etc/rpi-collector/rpi-collecrot.conf"
 
 
 class Configuration:

@@ -7,7 +7,7 @@ import datetime
 from threading import Thread
 from kafka import KafkaConsumer
 
-LOG = logging.getLogger("Consumer")
+LOG = logging.getLogger("collect.kafka.consumer")
 
 
 class Consumer(Thread):
