@@ -5,7 +5,7 @@ from threading import Thread
 import paho.mqtt.client as mqtt
 
 
-LOG = logging.getLogger("Publish")
+LOG = logging.getLogger("collect.mqtt.publish")
 
 
 class Publish(Thread):

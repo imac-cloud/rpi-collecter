@@ -7,7 +7,7 @@ import datetime
 from threading import Thread
 import paho.mqtt.client as mqtt
 
-LOG = logging.getLogger("Subscribe")
+LOG = logging.getLogger("collect.mqtt.subscribe")
 
 
 def on_connect(client, userdata, flags, rc):
