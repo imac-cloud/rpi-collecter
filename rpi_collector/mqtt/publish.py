@@ -1,7 +1,6 @@
 # coding=utf-8
 
 import logging
-import datetime
 from threading import Thread
 import paho.mqtt.client as mqtt
 
@@ -29,12 +28,6 @@ class Publish(Thread):
 
     def run(self):
         self.push_client.loop_start()
-        self.message = "{time} : {message}".format(
-            time=datetime.datetime.now(),
-            message=self.message,
-        )
-        message = self.message
-        self.push_client.publish(self.topic, message, qos=int(self.qos))
-
+        self.push_client.publish(self.topic, self.message, qos=int(self.qos))
         self.push_client.loop_stop()
         self.push_client.disconnect()

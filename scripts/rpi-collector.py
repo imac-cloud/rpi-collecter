@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 import sys
-from calamari_alert.run import main
+from rpi_collector.collector import main
 
 """
-calamri-alert - alert service for calamari
+Collect temperature data using Raspberry Pi,
+and publish to server using MQTT, Kafka
 """
-
 
 if __name__ == "__main__":
     sys.exit(main())
