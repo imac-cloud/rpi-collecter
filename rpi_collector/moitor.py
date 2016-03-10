@@ -25,25 +25,27 @@ LOG = logging.getLogger("Monitor")
 
 
 class Temperature(Thread):
-    def __init__(self, sensor_id_path):
+    def __init__(self, sensor_id_path, interval):
         super(Temperature, self).__init__()
-        self.sensor_file = open(sensor_id_path)
-        self.sensor_content = self.sensor_file.read()
-        self.sensor_file.close()
+        self.interval = interval
+        self.sensor_path = sensor_id_path
 
-    def parse_data(self):
-        data = self.sensor_content.split("\n")[1].split(" ")[9]
+    def parse_data(self, content):
+        data = content.split("\n")[1].split(" ")[9]
         return float(data[2:]) / 1000
 
     def run(self):
         while True:
+            sensor_file = open(self.sensor_path)
+            sensor_content = sensor_file.read()
+            sensor_file.close()
             now_time = datetime.datetime.now()
             LOG.info("{time}, {temp}".format(
                 time=now_time,
-                temp=self.parse_data()
+                temp=self.parse_data(sensor_content)
             ))
 
-            time.sleep(1)
+            time.sleep(self.interval)
 
 
 def main():
@@ -56,7 +58,10 @@ def main():
     root_logger.addHandler(sh)
     sh.setLevel(logging.DEBUG)
 
-    sensor = Temperature("/sys/bus/w1/devices/28-00000758ff7b/w1_slave")
+    sensor = Temperature(
+        "/sys/bus/w1/devices/28-00000758ff7b/w1_slave",
+        1
+    )
     sensor.run()
 
 
