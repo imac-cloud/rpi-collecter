@@ -17,7 +17,7 @@ class Configuration:
         return self.parser.get("default", "sensor_id_path")
 
     def time_interval(self):
-        return self.parser.getint("default", "time_interval")
+        return self.parser.getfloat("default", "time_interval")
 
     def message_queue_type(self):
         return self.parser.get("message_queue", "type")
