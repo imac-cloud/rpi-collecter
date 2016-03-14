@@ -24,6 +24,7 @@ class BaseSensor(Thread):
             self.producer_client = Producer(
                 self.kwargs["mq_address"],
                 self.kwargs["mq_port"],
+                self.kwargs['mq_topic']
             )
 
     def _publish_message(self, message):
@@ -40,7 +41,7 @@ class BaseSensor(Thread):
         self.producer_client.message = message
 
         # if you want to run on thread, you can call "start()" method
-        self.producer_client.run()
+        self.producer_client.push()
 
     def run_once(self, message):
         message = "{time}, {message}".format(
