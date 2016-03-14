@@ -105,7 +105,7 @@ def main():
                 if type(data) == list:
                     message += "{0.2f} ".format(data[1])
                 else:
-                    message += "{0.2f} ".format(data)
+                    message += "{0} ".format(data)
 
             push_client.run_once(message)
             time.sleep(push_client.interval)
