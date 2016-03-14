@@ -37,16 +37,17 @@ def check_sensors(ids, types):
 
 
 def main():
-    sh = logging.StreamHandler()
-    sh.setFormatter(logs.color_format())
-    sh.setLevel(logging.WARNING)
-
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
-    root_logger.addHandler(sh)
-    sh.setLevel(logging.DEBUG)
-
     conf = config.Configuration(config.FILE_PATH)
+
+    if conf.debug():
+        sh = logging.StreamHandler()
+        sh.setFormatter(logs.color_format())
+        sh.setLevel(logging.WARNING)
+
+        root_logger = logging.getLogger()
+        root_logger.setLevel(logging.DEBUG)
+        root_logger.addHandler(sh)
+        sh.setLevel(logging.DEBUG)
 
     multi_mq = conf.multi_message_queue()
     sensors = []

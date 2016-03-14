@@ -13,6 +13,9 @@ class Configuration:
         self.parser = SafeConfigParser()
         self.parser.read(self.conf_path)
 
+    def debug(self):
+        return self.parser.getboolean("default", "debug")
+
     # W1 Therm Sensor ID Configuration
     def w1therm_sensors_id(self):
         return self.parser.get("default", "w1therm_sensors_id").split(",")
