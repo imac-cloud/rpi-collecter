@@ -1,6 +1,13 @@
 # Collect Sensor Data Using Raspberry Pi
 透過 Raspberry Pi 與簡單幾個感測器來實作資料的收集，並推送到 OpenStack 上的 MQTT Broker、Apache Kafka伺服器。也可以透過 Spark Streaming 來接收 MQTT 與 Kafka 的訊息，目前實作以下感測器的接收：
-* DS18B20 溫度感測器
+* DS18S20
+* DS1822
+* DS18B20
+* DS28EA00
+* DS1825/MAX31850K
+* DHT11
+* DHT22
+* AM2302
 
 訊息佇列系統的推送目前實作```MQTT```與```Apache Kafka```，未來也會持續增加。
 
@@ -36,9 +43,15 @@ $ sudo python setup.py install
 編輯```/etc/rpi-collector/rpi-collector.conf```檔案，並修改一下：
 ```conf
 [default]
-w1therm_sensors_id = 28-00000758e2c2
+w1therm_sensors_id = 200000758e2c2
 w1therm_sensors_type = DS18S20
-time_interval = 1
+
+adafruit_sensors_gpio = 11
+adafruit_sensors_type = DHT11
+
+time_interval = 0.5
+
+multi_message_queue = true
 
 [message_queue]
 type = mqtt

@@ -1,21 +1,19 @@
 # coding=utf-8
 # Copyright 2016 NUTC i.m.a.c.
 # All Rights Reserved
-# Supporting DS18B20
 
 import time
 import datetime
 import logging
-from threading import Thread
 from w1thermsensor import W1ThermSensor
 
-from rpi_collector.mqtt.publish import Publish
-from rpi_collector.kafka.producer import Producer
-
-LOG = logging.getLogger("collect.temperature")
+from rpi_collector.base_sensor import BaseSensor
 
 
-class Temperature(Thread):
+LOG = logging.getLogger("collect.W1ThermSensor")
+
+
+class Temperature(BaseSensor):
 
     SENSOR_TYPE = {
         'DS18S20': W1ThermSensor.THERM_SENSOR_DS18S20, 'DS1822': W1ThermSensor.THERM_SENSOR_DS1822,
@@ -23,14 +21,11 @@ class Temperature(Thread):
         'DS28EA00': W1ThermSensor.THERM_SENSOR_DS28EA00, 'MAX31850K': W1ThermSensor.THERM_SENSOR_MAX31850K
     }
 
-    def __init__(self, sensor_id, interval, **kwargs):
-        super(Temperature, self).__init__()
+    def __init__(self, sensor_id, sensor_type, **kwargs):
+        super(Temperature, self).__init__(**kwargs)
         self.kwargs = kwargs
 
-        self.mq_type = self.kwargs["mq_type"] if self.kwargs["mq_type"] != "None" else None
-        self.interval = interval
-
-        sensor_type = self.SENSOR_TYPE[self.kwargs['sensor_type']]
+        sensor_type = self.SENSOR_TYPE[sensor_type]
         if sensor_type is None:
             LOG.error("Sensor Type Error ...")
 
@@ -38,29 +33,6 @@ class Temperature(Thread):
             sensor_type,
             sensor_id
         )
-
-        if self.mq_type == "kafka":
-            self.producer_client = Producer(
-                self.kwargs["mq_address"],
-                self.kwargs["mq_port"],
-                topic=self.kwargs["mq_topic"],
-            )
-
-    def _publish_message(self, message):
-        publish_client = Publish(
-                self.kwargs["mq_address"],
-                self.kwargs["mq_port"],
-                topic=self.kwargs["mq_topic"],
-                qos=self.kwargs["mq_qos"],
-            )
-        publish_client.message = message
-        publish_client.start()
-
-    def _producer_message(self, message):
-        self.producer_client.message = message
-
-        # if you want to run on thread, you can call "start()" method
-        self.producer_client.run()
 
     # if you want to run on thread, you can call "start()" method
     def run(self):
