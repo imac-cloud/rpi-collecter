@@ -102,8 +102,8 @@ def main():
             message = ""
             for sensor in sensors:
                 data = sensor.get_data()
-                if type(data) == list:
-                    message += "{0.2f} ".format(data[1])
+                if type(data) == tuple:
+                    message += "{0:0.2f} ".format(data[0])
                 else:
                     message += "{0} ".format(data)
 
