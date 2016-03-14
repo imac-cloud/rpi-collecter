@@ -108,7 +108,7 @@ def main():
                     message += "{0:0.2f} ".format(data[0])
                 else:
                     message += "{0} ".format(data)
-            message += ", cpu:{0:0.2f}% mem:{1:0.2f} disk:{2:0.2f}".format(
+            message += ", cpu:{0:0.2f} mem:{1:0.2f} disk:{2:0.2f}".format(
                 system_usage.get_cpu_percent(),
                 system_usage.get_virtual_memory_percent(),
                 system_usage.get_disk_usage_percen()
