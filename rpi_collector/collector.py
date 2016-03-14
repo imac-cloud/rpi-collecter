@@ -16,11 +16,24 @@
 #
 
 import logging
+import time
+
 from rpi_collector.common import logs
 from rpi_collector.common import config
-from rpi_collector.temperature import Temperature
+
+from rpi_collector import w1therm_sensor
+from rpi_collector import adafruit_sensor
+from rpi_collector import base_sensor
 
 LOG = logging.getLogger("collect")
+
+
+def check_sensors(ids, types):
+    if len(ids) != len(types):
+        LOG.error("Configuration Error ...")
+        exit(1)
+
+    return ids, types
 
 
 def main():
@@ -35,18 +48,69 @@ def main():
 
     conf = config.Configuration(config.FILE_PATH)
 
-    sensor = Temperature(
-        sensor_id_path=conf.sensor_path(),
-        interval=conf.time_interval(),
-        mq_type=conf.message_queue_type(),
-        mq_address=conf.message_queue_address(),
-        mq_port=conf.message_queue_port(),
-        mq_topic=conf.message_queue_topic(),
-        mq_qos=conf.message_queue_qos(),
+    multi_mq = conf.multi_message_queue()
+    sensors = []
+
+    w1therm_ids, w1therm_types = check_sensors(
+        conf.w1therm_sensors_id(),
+        conf.w1therm_sensors_type()
     )
 
-    # if you want to run on thread, you can call "start()" method
-    sensor.run()
+    mq_dict = {
+        'interval': conf.time_interval(),
+        'mq_type': conf.message_queue_type(),
+        'mq_address': conf.message_queue_address(),
+        'mq_port': conf.message_queue_port(),
+        'mq_topic': conf.message_queue_topic(),
+        'mq_qos': conf.message_queue_qos(),
+    }
+
+    for (sensor_id, sensor_type) in zip(w1therm_ids, w1therm_types):
+        if sensor_id != "None" and sensor_type != "None":
+            sensor = w1therm_sensor.Temperature(
+                sensor_id=sensor_id,
+                sensor_type=sensor_type,
+                **mq_dict
+            )
+            # if you want to run on thread, you can call "start()" method
+            if not multi_mq:
+                sensors.append(sensor)
+            else:
+                sensor.start()
+
+    adafruit_gpios, adafruit_types = check_sensors(
+        conf.adafruit_sensors_gpio(),
+        conf.adafruit_sensors_type(),
+    )
+
+    for (sensor_gpio, sensor_type) in zip(adafruit_gpios, adafruit_types):
+        if sensor_gpio != "None" and sensor_type != "None":
+            sensor = adafruit_sensor.AdafruitSensor(
+                sensor_gpio=sensor_gpio,
+                sensor_type=sensor_type,
+                **mq_dict
+            )
+            # if you want to run on thread, you can call "start()" method
+            if not multi_mq:
+                sensors.append(sensor)
+            else:
+                sensor.start()
+
+    if not multi_mq and len(sensors) > 0:
+        push_client = base_sensor.BaseSensor(**mq_dict)
+        while True:
+            message = ""
+            for sensor in sensors:
+                data = sensor.get_data()
+                if type(data) == tuple:
+                    message += "{0:0.2f} ".format(data[0])
+                else:
+                    message += "{0} ".format(data)
+
+            push_client.run_once(message)
+            time.sleep(push_client.interval)
+    else:
+        LOG.error("No any sensors ...")
 
 
 if __name__ == '__main__':

@@ -13,11 +13,27 @@ class Configuration:
         self.parser = SafeConfigParser()
         self.parser.read(self.conf_path)
 
-    def sensor_path(self):
-        return self.parser.get("default", "sensor_id_path")
+    # W1 Therm Sensor ID Configuration
+    def w1therm_sensors_id(self):
+        return self.parser.get("default", "w1therm_sensors_id").split(",")
+
+    # W1 Therm Sensor Type Configuration
+    def w1therm_sensors_type(self):
+        return self.parser.get("default", "w1therm_sensors_type").split(",")
+
+    # Adafruit Sensor GPIO Configuration
+    def adafruit_sensors_gpio(self):
+        return self.parser.get("default", "adafruit_sensors_gpio").split(",")
+
+    # Adafruit Sensor Type Configuration
+    def adafruit_sensors_type(self):
+        return self.parser.get("default", "adafruit_sensors_type").split(",")
 
     def time_interval(self):
-        return self.parser.getint("default", "time_interval")
+        return self.parser.getfloat("default", "time_interval")
+
+    def multi_message_queue(self):
+        return self.parser.getboolean("default", "multi_message_queue")
 
     def message_queue_type(self):
         return self.parser.get("message_queue", "type")
