@@ -14,7 +14,7 @@
 # 安裝與執行
 首先安裝 python 與 python-pip 套件：
 ```sh
-$ sudo apt-get install -y git python-pip python-setuptools
+$ sudo apt-get install -y git python-pip python-setuptools build-essential python-dev
 ```
 
 從 Git Server 將 Repositiory 下載至要執行的 Raspberry Pi 上：

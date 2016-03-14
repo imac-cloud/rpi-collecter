@@ -3,6 +3,7 @@
 # All Rights Reserved
 
 import logging
+import datetime
 from threading import Thread
 
 from rpi_collector.mqtt.publish import Publish
@@ -40,3 +41,18 @@ class BaseSensor(Thread):
 
         # if you want to run on thread, you can call "start()" method
         self.producer_client.run()
+
+    def run_once(self, message):
+        message = "{time}, {message}".format(
+            time=datetime.datetime.now(),
+            message=message,
+        )
+        try:
+            if self.mq_type == "mqtt":
+                self._publish_message(message)
+            elif self.mq_type == "kafka":
+                self._producer_message(message)
+        except Exception as e:
+            LOG.error("%s" % (e.__str__()))
+
+        LOG.info(message)

@@ -30,10 +30,13 @@ class AdafruitSensor(BaseSensor):
         if self.sensor_type is None:
             LOG.error("Sensor Type Error ...")
 
+    def get_data(self):
+        return Adafruit_DHT.read_retry(self.sensor_type, self.sensor_gpio)
+
     # if you want to run on thread, you can call "start()" method
     def run(self):
         while True:
-            humidity, temperature = Adafruit_DHT.read_retry(self.sensor_type, self.sensor_gpio)
+            humidity, temperature = self.get_data()
             message = "{0}, {1:0.1f}%, {1:0.1f}%".format(
                 datetime.datetime.now(),
                 temperature,
@@ -49,3 +52,5 @@ class AdafruitSensor(BaseSensor):
 
             LOG.info(message)
             time.sleep(self.interval)
+
+

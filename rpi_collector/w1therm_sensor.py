@@ -34,12 +34,15 @@ class Temperature(BaseSensor):
             sensor_id
         )
 
+    def get_data(self):
+        return self.sensor.get_temperature()
+
     # if you want to run on thread, you can call "start()" method
     def run(self):
         while True:
             message = "{time}, {temp}".format(
                 time=datetime.datetime.now(),
-                temp=self.sensor.get_temperature()
+                temp=self.get_data(),
             )
             try:
                 if self.mq_type == "mqtt":

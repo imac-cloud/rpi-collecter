@@ -32,6 +32,9 @@ class Configuration:
     def time_interval(self):
         return self.parser.getfloat("default", "time_interval")
 
+    def multi_message_queue(self):
+        return self.parser.getboolean("default", "multi_message_queue")
+
     def message_queue_type(self):
         return self.parser.get("message_queue", "type")
 
