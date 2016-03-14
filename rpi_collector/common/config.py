@@ -13,8 +13,13 @@ class Configuration:
         self.parser = SafeConfigParser()
         self.parser.read(self.conf_path)
 
-    def sensor_path(self):
-        return self.parser.get("default", "sensor_id_path")
+    def w1therm_sensors_id(self):
+        ids = self.parser.get("default", "w1therm_sensors_id").split(",")
+        return ids
+
+    def w1therm_sensors_type(self):
+        types = self.parser.get("default", "w1therm_sensors_type").split(",")
+        return types
 
     def time_interval(self):
         return self.parser.getfloat("default", "time_interval")

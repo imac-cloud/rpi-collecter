@@ -7,6 +7,7 @@ import time
 import datetime
 import logging
 from threading import Thread
+from w1thermsensor import W1ThermSensor
 
 from rpi_collector.mqtt.publish import Publish
 from rpi_collector.kafka.producer import Producer
@@ -15,14 +16,28 @@ LOG = logging.getLogger("collect.temperature")
 
 
 class Temperature(Thread):
-    def __init__(self, sensor_id_path, interval, **kwargs):
+
+    SENSOR_TYPE = {
+        'DS18S20': W1ThermSensor.THERM_SENSOR_DS18S20, 'DS1822': W1ThermSensor.THERM_SENSOR_DS1822,
+        'DS18B20': W1ThermSensor.THERM_SENSOR_DS18B20, 'DS1825': W1ThermSensor.THERM_SENSOR_DS1825,
+        'DS28EA00': W1ThermSensor.THERM_SENSOR_DS28EA00, 'MAX31850K': W1ThermSensor.THERM_SENSOR_MAX31850K
+    }
+
+    def __init__(self, sensor_id, interval, **kwargs):
         super(Temperature, self).__init__()
         self.kwargs = kwargs
 
         self.mq_type = self.kwargs["mq_type"] if self.kwargs["mq_type"] != "None" else None
-
         self.interval = interval
-        self.sensor_path = sensor_id_path
+
+        sensor_type = self.SENSOR_TYPE[self.kwargs['sensor_type']]
+        if sensor_type is None:
+            LOG.error("Sensor Type Error ...")
+
+        self.sensor = W1ThermSensor(
+            sensor_type,
+            sensor_id
+        )
 
         if self.mq_type == "kafka":
             self.producer_client = Producer(
@@ -30,10 +45,6 @@ class Temperature(Thread):
                 self.kwargs["mq_port"],
                 topic=self.kwargs["mq_topic"],
             )
-
-    def parse_data(self, content):
-        data = content.split("\n")[1].split(" ")[9]
-        return float(data[2:]) / 1000
 
     def _publish_message(self, message):
         publish_client = Publish(
@@ -54,12 +65,9 @@ class Temperature(Thread):
     # if you want to run on thread, you can call "start()" method
     def run(self):
         while True:
-            sensor_file = open(self.sensor_path)
-            sensor_content = sensor_file.read()
-            sensor_file.close()
             message = "{time}, {temp}".format(
                 time=datetime.datetime.now(),
-                temp=self.parse_data(sensor_content)
+                temp=self.sensor.get_temperature()
             )
             try:
                 if self.mq_type == "mqtt":

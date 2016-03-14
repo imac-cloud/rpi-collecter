@@ -36,14 +36,15 @@ $ sudo python setup.py install
 編輯```/etc/rpi-collector/rpi-collector.conf```檔案，並修改一下：
 ```conf
 [default]
-sensor_id_path = /sys/bus/w1/devices/28-00000758ff7b/w1_slave
+w1therm_sensors_id = 28-00000758e2c2
+w1therm_sensors_type = DS18S20
 time_interval = 1
 
 [message_queue]
 type = mqtt
-address = localhost
+address = 10.21.20.195
 port = 1883
-topic_name = rpi-1
+topic_name = bridge/rpi-1
 qos_level = 2
 ```
 > ```P.S``` 目前 message_queue type 有```mqtt```、```kafka```。若沒設定則不會推送。

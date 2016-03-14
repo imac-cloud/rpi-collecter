@@ -9,6 +9,7 @@ if sys.version_info <= (2, 5):
 requirements = [
     'paho-mqtt>=1.1',
     'kafka-python>=1.0.1',
+    'w1thermsensor>=0.3.0',
 ]
 
 setup(

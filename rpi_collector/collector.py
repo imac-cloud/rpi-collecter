@@ -34,19 +34,26 @@ def main():
     sh.setLevel(logging.DEBUG)
 
     conf = config.Configuration(config.FILE_PATH)
+    if len(conf.w1therm_sensors_id()) != len(conf.w1therm_sensors_type()):
+        LOG.error("Configuration Error ...")
 
-    sensor = Temperature(
-        sensor_id_path=conf.sensor_path(),
-        interval=conf.time_interval(),
-        mq_type=conf.message_queue_type(),
-        mq_address=conf.message_queue_address(),
-        mq_port=conf.message_queue_port(),
-        mq_topic=conf.message_queue_topic(),
-        mq_qos=conf.message_queue_qos(),
-    )
+    ids = conf.w1therm_sensors_id()
+    types = conf.w1therm_sensors_type()
 
-    # if you want to run on thread, you can call "start()" method
-    sensor.run()
+    for (sensor_id, sensor_type) in zip(ids, types):
+        sensor = Temperature(
+            sensor_id=sensor_id,
+            interval=conf.time_interval(),
+            sensor_type=sensor_type,
+            mq_type=conf.message_queue_type(),
+            mq_address=conf.message_queue_address(),
+            mq_port=conf.message_queue_port(),
+            mq_topic=conf.message_queue_topic(),
+            mq_qos=conf.message_queue_qos(),
+        )
+
+        # if you want to run on thread, you can call "start()" method
+        sensor.run()
 
 
 if __name__ == '__main__':
