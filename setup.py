@@ -10,12 +10,13 @@ requirements = [
     'paho-mqtt>=1.1',
     'kafka-python>=1.0.1',
     'w1thermsensor==0.3.0',
-    'adafruit_python_dht==1.1.2'
+    'adafruit_python_dht==1.1.2',
+    'psutil>=4.0.0'
 ]
 
 setup(
     name='rpi-collector',
-    version='0.1.0',
+    version='0.2.0',
     packages=find_packages(),
     description='Collect temperature data using Raspberry Pi',
     author='Kyle Bai',
