@@ -5,6 +5,7 @@
 import logging
 import datetime
 from threading import Thread
+import json
 
 from rpi_collector.mqtt.publish import Publish
 from rpi_collector.kafka.producer import Producer
@@ -44,15 +45,12 @@ class BaseSensor(Thread):
         self.producer_client.push()
 
     def run_once(self, message):
-        message = "{time}, {message}".format(
-            time=datetime.datetime.now(),
-            message=message,
-        )
+        message.update({"date": "{0}".format(datetime.datetime.now())})
         try:
             if self.mq_type == "mqtt":
-                self._publish_message(message)
+                self._publish_message(json.dumps(message))
             elif self.mq_type == "kafka":
-                self._producer_message(message)
+                self._producer_message(json.dumps(message))
         except Exception as e:
             LOG.error("%s" % (e.__str__()))
 
