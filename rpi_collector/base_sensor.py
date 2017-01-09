@@ -45,7 +45,7 @@ class BaseSensor(Thread):
         self.producer_client.push()
 
     def run_once(self, message):
-        message.update({"date": datetime.datetime.now()})
+        message.update({"date": "{0}".format(datetime.datetime.now())})
         try:
             if self.mq_type == "mqtt":
                 self._publish_message(json.dumps(message))
