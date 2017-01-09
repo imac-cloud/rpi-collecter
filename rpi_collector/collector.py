@@ -101,18 +101,22 @@ def main():
     if not multi_mq and len(sensors) > 0:
         push_client = base_sensor.BaseSensor(**mq_dict)
         while True:
-            message = ""
+            message = dict()
             for sensor in sensors:
                 data = sensor.get_data()
                 if type(data) == tuple:
-                    message += "{0:0.2f} ".format(data[0])
+                    message.update({
+                        "humidity": data[0],
+                        "temperature": data[1]
+                    })
                 else:
-                    message += "{0} ".format(data)
-            message += ", cpu:{0:0.2f} mem:{1:0.2f} disk:{2:0.2f}".format(
-                system_usage.get_cpu_percent(),
-                system_usage.get_virtual_memory_percent(),
-                system_usage.get_disk_usage_percen()
-            )
+                    message.update({"temperature": data})
+
+            message.update({
+                "cpu_usage": system_usage.get_cpu_percent(),
+                "memory_usage": system_usage.get_virtual_memory_percent(),
+                "disk_usage": system_usage.get_disk_usage_percen()
+            })
             push_client.run_once(message)
             time.sleep(push_client.interval)
     else:

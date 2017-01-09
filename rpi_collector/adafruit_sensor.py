@@ -52,5 +52,3 @@ class AdafruitSensor(BaseSensor):
 
             LOG.info(message)
             time.sleep(self.interval)
-
-
